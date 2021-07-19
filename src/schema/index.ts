@@ -1,6 +1,11 @@
-// import { buildSchemaSync } from "type-graphql";
-// import { ImageResolver } from "./image";
-// import { HouseResolver } from "./house";
-// import { authChecker } from "./auth";
+import { QueryDocumentKeys } from "graphql/language/visitor";
+import { buildSchemaSync, Resolver, Query } from "type-graphql";
+import { ImageResolver } from "./image";
+import { HouseResolver } from "./house";
+import { authChecker } from "./auth";
 
-export {};
+export const schema = buildSchemaSync({
+  resolvers: [ImageResolver, HouseResolver],
+  emitSchemaFile: process.env.NODE_ENV === "development",
+  authChecker
+})
