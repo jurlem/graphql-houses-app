@@ -17,7 +17,7 @@ const server = new ApolloServer({
       prisma
     }
   },
-  tracing:process.env.NODE_ENV === "developement"
+  tracing: process.env.NODE_ENV === "development"
 })
 
 // create handler to list to requests 
