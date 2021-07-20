@@ -42,13 +42,13 @@ const parseBounds = (boundsString: string) => {
 
 export default function Home() {
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
-  const [dataBounds, setDataBounds] = useLocalState<string>("bounds", "[[], []]")
+  const [dataBounds, setDataBounds] = useLocalState<string>("bounds", "[[0,0], [0,0]]")
   const [debouncedDataBounds] = useDebounce(dataBounds, 200)
   const { data, error } = useQuery<HousesQuery, HousesQueryVariables>(
     HOUSES_QUERY,
     {
       variables: { bounds: parseBounds(debouncedDataBounds) },
-      skip: !parseBounds(debouncedDataBounds),
+      // skip: !parseBounds(debouncedDataBounds),
     }
   );
   // stop flickering:
