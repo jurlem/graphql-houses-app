@@ -48,7 +48,7 @@ export default function Home() {
     HOUSES_QUERY,
     {
       variables: { bounds: parseBounds(debouncedDataBounds) },
-      skip: !parseBounds(debouncedDataBounds,
+      skip: !parseBounds(debouncedDataBounds),
     }
   );
   // stop flickering:
