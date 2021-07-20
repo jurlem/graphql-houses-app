@@ -6,9 +6,7 @@ import Map from "src/components/map";
 import HouseList from "src/components/houseList";
 import { useLastData } from "src/utils/useLastData";
 import { useLocalState } from "src/utils/useLocalState";
-import { IsLatitude } from "class-validator";
 import { HousesQuery, HousesQueryVariables } from "src/generated/HousesQuery";
-
 
 const HOUSES_QUERY = gql`
   query HousesQuery($bounds: BoundsInput!) {
@@ -23,7 +21,7 @@ const HOUSES_QUERY = gql`
   }
 `;
 
-type BoundsArray = [[number, number], [number, number]]
+type BoundsArray = [[number, number], [number, number]];
 
 const parseBounds = (boundsString: string) => {
   const bounds = JSON.parse(boundsString) as BoundsArray;
@@ -39,37 +37,45 @@ const parseBounds = (boundsString: string) => {
   };
 };
 
-
 export default function Home() {
-  const [highlightedId, setHighlightedId] = useState<string | null>(null)
-  const [dataBounds, setDataBounds] = useLocalState<string>("bounds", "[[0,0], [0,0]]")
-  const [debouncedDataBounds] = useDebounce(dataBounds, 200)
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const [dataBounds, setDataBounds] = useLocalState<string>(
+    "bounds",
+    "[[0,0],[0,0]]"
+  );
+  const [debouncedDataBounds] = useDebounce(dataBounds, 200);
   const { data, error } = useQuery<HousesQuery, HousesQueryVariables>(
     HOUSES_QUERY,
     {
       variables: { bounds: parseBounds(debouncedDataBounds) },
-      // skip: !parseBounds(debouncedDataBounds),
     }
   );
-  // stop flickering:
-  const lastData = useLastData(data)
+  const lastData = useLastData(data);
 
-  if (error) return <Layout main={<div>Error loading houses</div>} />
+  if (error) return <Layout main={<div>Error loading houses</div>} />;
 
-  return <Layout
-    main={
-      <div className="flex">
-        <div className="w-1/2 pb-4" style={{ maxHeight: "calc(100vh - 64px)", overflowX: "scroll" }}>
-          <HouseList
-            houses={lastData ? lastData.houses : []}
-            setHighlightedId={setHighlightedId}
-          />
+  return (
+    <Layout
+      main={
+        <div className="flex">
+          <div
+            className="w-1/2 pb-4"
+            style={{ maxHeight: "calc(100vh - 64px)", overflowX: "scroll" }}
+          >
+            <HouseList
+              houses={lastData ? lastData.houses : []}
+              setHighlightedId={setHighlightedId}
+            />
+          </div>
+          <div className="w-1/2">
+            <Map
+              setDataBounds={setDataBounds}
+              houses={lastData ? lastData.houses : []}
+              highlightedId={highlightedId}
+            />
+          </div>
         </div>
-        <div className="w-1/2"><Map
-          setDataBounds={setDataBounds}
-          houses={lastData ? lastData.houses : []}
-          highlightedId={highlightedId}
-        /></div>
-      </div>
-    } />;
+      }
+    />
+  );
 }
